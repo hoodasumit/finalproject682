@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "Logging.level.org.sringframework.web",
+    "type": "java.lang.String",
+    "description": "A description for 'Logging.level.org.sringframework.web'"
+  },
+  {
+    "name": "mydemo.accessid",
+    "type": "java.lang.String",
+    "description": "A description for 'mydemo.accessid'"
+  },
+  {
+    "name": "mydemo.secretkey",
+    "type": "java.lang.String",
+    "description": "A description for 'mydemo.secretkey'"
+  }
+]}

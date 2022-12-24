@@ -1,0 +1,12 @@
+ <!DOCTYPE html>
+      <html xmlns:th="http://www.thymeleaf.org">
+     <head th:fragment="site-head">
+      <meta charset="UTF-8" />
+      <script th:src="|https://code.jquery.com/jquery-1.12.4.min.js|"></script>
+      <meta th:include="this :: head" th:remove="tag"/>
+      </head>
+     <body>
+    <header th:fragment="site-header">
+     <a href="#" style="color: rgb(0, 0, 255)" th:href="@{/}">Home</a>
+     <a href="#"  style="color: rgb(0, 0, 255)" th:href="@{/process}">Analyze Documents</a>
+    </header>

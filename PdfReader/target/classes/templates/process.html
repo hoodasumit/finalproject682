@@ -1,0 +1,134 @@
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<script
+th:src="|https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js|"></script>
+<script th:src="|https://code.jquery.com/jquery-1.12.4.min.js|"></script>
+<script th:src="|https://code.jquery.com/ui/1.11.4/jquery-ui.min.js|"></script>
+<script
+src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link
+href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+rel="stylesheet" />
+<script src="../public/js/message.js" th:src="@{/js/item.js}"></script>
+<link rel="stylesheet" href="../public/css/styles.css"
+th:href="@{/css/styles.css}" />
+<link rel="icon" href="../public/images/favicon.ico"
+th:href="@{/images/favicon.ico}" />
+</head>
+
+<body>
+<header th:replace="layout :: site-header"></header>
+
+
+<div class="container">
+<h2>Document Analyzer Application</h2>
+<div>
+<p>Upload a PDF document to an Amazon S3 Bucket</p>
+
+<form method="POST" onsubmit="myFunction()" action="/upload"
+enctype="multipart/form-data">
+<input type="file" name="file" /> <input type="submit"
+value="Submit" />
+</form>
+</div>
+<div>
+
+<h3>Select the Document to analyze</h3>
+<div class="dropdown">
+  <div class="dropdown">
+<select name="docs" id="docs">
+</select>
+</div>
+</div>
+
+<script>
+/* When the user clicks on the button, 
+toggle between hiding and showing the dropdown content */
+function getDocNames() {
+  document.getElementById("docs").classList.toggle("show");
+  $("#docs").empty()
+
+  $.ajax('/getdocs', {
+    type: 'GET',  // http method
+    success: function (data, status, xhr) {
+
+       var xml = data;
+       $(xml).find('Doc').each(function () {
+          var $field = $(this);
+          var name = $field.find('Key').text();
+
+         $('#docs').append($('<option/>', {
+               value: name,
+               text : name
+           }));
+       });
+      },
+   error: function (jqXhr, textStatus, errorMessage) {
+       $('p').append('Error' + errorMessage);
+   }
+ });
+}
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+
+window.onload = getDocNames;
+
+function analyzeDoc() { //analyzeDoc
+alert("this is analyze doc method");
+     // Get the doc
+     var name = $("#docs").val();
+alert(name);
+     $.ajax('/analyzeDoc', {
+        type: 'POST',  // http method
+        data: 'name=' + name ,  // data to submit
+        success: function (data, status, xhr) {
+            var xml = data
+            $(xml).find('Item').each(function () {
+
+                var $field = $(this);
+                var doc = $field.find('Doc').text();
+
+                var oldValue = $("#textarea1").val();
+
+                if (oldValue === "") {
+                    $("#textarea1").val(doc);
+                } else {
+                    $("#textarea1").val(oldValue + "\n" + doc);
+                }
+           });
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            $('p').append('Error' + errorMessage);
+        }
+      });
+      }
+      
+</script>
+<p> <br><br><br> </p>
+<button onclick="analyzeDoc()">Analyze Document</button>
+</div>
+<div>
+<br>
+<br>
+<br>
+<div class="form-group">
+<label for="textarea1">Amazon Textract results</label>
+<textarea class="form-control" id="textarea1" rows="3"></textarea>
+</div>
+</div>
+</div>
+</body>
+</html>
